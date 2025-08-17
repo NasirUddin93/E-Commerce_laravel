@@ -27,43 +27,16 @@
     <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-      <!-- Product Card -->
-      <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg">
-        <img src="https://via.placeholder.com/300" alt="Product" class="w-full h-48 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Product Name</h3>
-          <p class="text-gray-600">$29.99</p>
-          <button class="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Add to Cart</button>
-        </div>
-      </div>
-
-      <!-- Repeat Product Cards -->
-      <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg">
-        <img src="https://via.placeholder.com/300" alt="Product" class="w-full h-48 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Product Name</h3>
-          <p class="text-gray-600">$49.99</p>
-          <button class="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Add to Cart</button>
-        </div>
-      </div>
-
-      <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg">
-        <img src="https://via.placeholder.com/300" alt="Product" class="w-full h-48 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Product Name</h3>
-          <p class="text-gray-600">$59.99</p>
-          <button class="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Add to Cart</button>
-        </div>
-      </div>
-
-      <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg">
-        <img src="https://via.placeholder.com/300" alt="Product" class="w-full h-48 object-cover">
-        <div class="p-4">
-          <h3 class="text-lg font-semibold">Product Name</h3>
-          <p class="text-gray-600">$79.99</p>
-          <button class="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Add to Cart</button>
-        </div>
-      </div>
+      @foreach ($products as $product)
+          <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg">
+              <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+              <div class="p-4">
+                  <h3 class="text-lg font-semibold">{{ $product->name }}</h3>
+                  <p class="text-gray-600">${{ $product->price }}</p>
+                  <button class="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Add to Cart</button>
+              </div>
+          </div>
+      @endforeach
 
     </div>
   </section>

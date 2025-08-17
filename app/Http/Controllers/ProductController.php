@@ -12,7 +12,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = \App\Models\Product::latest()->paginate(10);
+        $products = Product::latest()->paginate(10);
         return view('products.index', compact('products'));
     }
 
@@ -98,7 +98,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+         return view('products.edit', compact('product'));
     }
 
     /**
@@ -106,14 +106,96 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        // ✅ Validate input (ignore current product's SKU in unique check)
+        $validated = $request->validate([
+            'sku'            => 'required|max:100|unique:products,sku,' . $product->id,
+            'name'           => 'required|string|max:255',
+            'description'    => 'nullable|string',
+            'category'       => 'nullable|string|max:100',
+            'price'          => 'required|numeric|min:0',
+            'stock'          => 'required|integer|min:0',
+            'brand'          => 'nullable|string|max:100',
+            'main_image'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'gallery_images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'status'         => 'boolean',
+            'discount_price' => 'nullable|numeric|min:0',
+            'rating'         => 'nullable|numeric|min:0|max:5',
+            'reviews_count'  => 'nullable|integer|min:0',
+            'color'          => 'nullable|string|max:50',
+            'size'           => 'nullable|string|max:50',
+            'material'       => 'nullable|string|max:100',
+            'weight'         => 'nullable|numeric|min:0',
+            'dimensions'     => 'nullable|string|max:100',
+            'tags'           => 'nullable|string',
+            'warranty'       => 'nullable|string|max:255',
+            'shipping_info'  => 'nullable|string|max:255',
+            'return_policy'  => 'nullable|string|max:255',
+            'video_url'      => 'nullable|url',
+            'vendor_id'      => 'nullable|integer',
+        ]);
+
+        // ✅ Handle main image upload
+        if ($request->hasFile('main_image')) {
+            // delete old image if exists
+            if ($product->main_image && \Storage::disk('public')->exists($product->main_image)) {
+                \Storage::disk('public')->delete($product->main_image);
+            }
+            $validated['main_image'] = $request->file('main_image')->store('products', 'public');
+        }
+
+        // ✅ Handle gallery images upload
+        if ($request->hasFile('gallery_images')) {
+            // delete old gallery images if exists
+            if ($product->gallery_images) {
+                foreach (json_decode($product->gallery_images, true) as $oldImage) {
+                    if (\Storage::disk('public')->exists($oldImage)) {
+                        \Storage::disk('public')->delete($oldImage);
+                    }
+                }
+            }
+            $galleryPaths = [];
+            foreach ($request->file('gallery_images') as $image) {
+                $galleryPaths[] = $image->store('products/gallery', 'public');
+            }
+            $validated['gallery_images'] = json_encode($galleryPaths);
+        }
+
+        // ✅ Update product in DB
+        $product->update($validated);
+
+        // ✅ Redirect back with success
+        return redirect()->route('products.index')
+                        ->with('success', 'Product updated successfully!');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Product $product)
     {
-        //
+        // Delete main image if exists
+        if ($product->main_image && \Storage::disk('public')->exists('products/' . $product->main_image)) {
+            \Storage::disk('public')->delete('products/' . $product->main_image);
+        }
+
+        // Delete gallery images if stored as JSON
+        if ($product->gallery_images) {
+            $gallery = json_decode($product->gallery_images, true);
+            if (is_array($gallery)) {
+                foreach ($gallery as $img) {
+                    if (\Storage::disk('public')->exists($img)) {
+                        \Storage::disk('public')->delete($img);
+                    }
+                }
+            }
+        }
+
+        // Finally delete the product record
+        $product->delete();
+
+        return redirect()->route('products.index')
+                        ->with('success', 'Product deleted successfully.');
     }
+
 }

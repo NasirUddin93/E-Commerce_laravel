@@ -1,56 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>@yield('title') - E-Commerce</title>
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50">
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-  <!-- Navbar -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            @include('layouts.navigation')
 
-        <!-- Logo -->
-        <a href="#" class="text-2xl font-bold text-blue-600">ShopEase</a>
+            <!-- Page Heading -->
+            @if (isset($header))
+                <header class="bg-white dark:bg-gray-800 shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endif
 
-        <!-- Search -->
-        <div class="hidden md:flex flex-1 mx-6">
-          <input type="text" placeholder="Search products..."
-                 class="w-full px-4 py-2 border rounded-l-lg focus:outline-none">
-          <button class="bg-blue-600 text-white px-4 rounded-r-lg">Search</button>
+            <!-- Page Content -->
+          <main>
+              @yield('content')
+          </main>
+
         </div>
-
-        <!-- Cart -->
-        <div class="flex space-x-6">
-          <a href="#" class="text-gray-700 hover:text-blue-600">Login</a>
-          <a href="#" class="relative">
-            <span class="material-icons">🛒</span>
-            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">2</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-    <div class="">
-        @yield('content')
-    </div>
-
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-gray-300 py-8">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-      <p>&copy; 2025 ShopEase. All rights reserved.</p>
-    </div>
-  </footer>
-
-</body>
+    </body>
 </html>

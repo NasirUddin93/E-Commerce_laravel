@@ -85,15 +85,15 @@
                            class="text-blue-600 hover:underline">View</a>
                         <a href="{{ route('products.edit', $product->id) }}"
                            class="text-yellow-600 hover:underline">Edit</a>
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline">
+                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="delete-form inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit"
-                                    class="text-red-600 hover:underline"
-                                    onclick="return confirm('Are you sure?')">
+                            <button type="button"
+                                    class="text-red-600 hover:underline delete-btn">
                                 Delete
                             </button>
                         </form>
+
                     </td>
                 </tr>
                 @empty
@@ -107,4 +107,43 @@
         </table>
     </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteForms = document.querySelectorAll(".delete-form");
+
+    deleteForms.forEach(form => {
+        const btn = form.querySelector(".delete-btn");
+
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This action cannot be undone!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // Success Message after delete
+    @if(session('success'))
+        Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "{{ session('success') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
+});
+</script>
+
 @endsection
