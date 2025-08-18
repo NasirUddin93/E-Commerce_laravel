@@ -47,6 +47,7 @@ $faker = Faker::create();
                 'main_image' => $mainImagePath,
                 'gallery_images' => json_encode($galleryPaths),
                 'status' => 1,
+                'is_featured' => ($i <= 3) ? true : false,
                 'color' => $faker->safeColorName(),
                 'size' => $faker->randomElement(['Small','Medium','Large']),
                 'weight' => $faker->randomFloat(2, 0.05, 2),

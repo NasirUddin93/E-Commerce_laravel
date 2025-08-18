@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,7 +14,8 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::latest()->paginate(10);
-        return view('products.index', compact('products'));
+        $featuredProducts = Product::where('is_featured', true)->get();
+        return view('products.index', compact('products', 'featuredProducts'));
     }
 
     /**
@@ -196,6 +198,18 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
                         ->with('success', 'Product deleted successfully.');
+    }
+
+    public function featuredProducts()
+    {
+        $featuredProducts = Product::where('is_featured', true)->get();
+        return view('products.featured', compact('featuredProducts'));
+    }
+
+    public function productsByCategory(Category $category)
+    {
+        $products = $category->products()->paginate(10);
+        return view('products.category', compact('products', 'category'));
     }
 
 }

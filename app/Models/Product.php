@@ -5,6 +5,7 @@ use Illuminate\Database\Seeder;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -16,5 +17,13 @@ class Product extends Model
     'dimensions', 'tags', 'warranty', 'shipping_info', 'return_policy',
     'video_url', 'vendor_id'
 ];
+
+    /**
+     * Get the cart items for the product.
+     */
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
 
 }

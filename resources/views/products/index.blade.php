@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+@if($featuredProducts->count() > 0)
+<div class="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-lg mb-8 mt-[30px]">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @foreach($featuredProducts as $product)
+            <div class="border rounded-lg p-4 text-center">
+                @if($product->main_image)
+                    <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover rounded-md mb-4">
+                @else
+                    <div class="w-full h-48 flex items-center justify-center bg-gray-200 rounded-md mb-4 text-gray-500">No Image</div>
+                @endif
+                <h3 class="text-lg font-semibold mb-2">{{ $product->name }}</h3>
+                <p class="text-gray-700">${{ number_format($product->price, 2) }}</p>
+                <a href="{{ route('products.show', $product->id) }}" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
+            </div>
+        @endforeach
+    </div>
+</div>
+@endif
 <div class="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-lg">
     <h2 class="text-2xl font-bold mb-6 text-gray-800">Products List</h2>
 
@@ -43,7 +62,7 @@
                     <!-- Product Image -->
                     <td class="border p-2 text-center">
                         @if($product->main_image)
-                            <img src="{{ asset('storage/products/' . $product->main_image) }}"
+                            <img src="{{ asset('storage/' . $product->main_image) }}"
                                  class="w-16 h-16 object-cover rounded mx-auto">
                         @else
                             <span class="text-gray-400">No Image</span>
@@ -83,17 +102,18 @@
                     <td class="border p-2 text-center space-x-2">
                         <a href="{{ route('products.show', $product->id) }}"
                            class="text-blue-600 hover:underline">View</a>
-                        <a href="{{ route('products.edit', $product->id) }}"
-                           class="text-yellow-600 hover:underline">Edit</a>
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="delete-form inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button"
-                                    class="text-red-600 hover:underline delete-btn">
-                                Delete
-                            </button>
-                        </form>
-
+                        @if(Auth::check() && Auth::user()->role === 'admin')
+                            <a href="{{ route('products.edit', $product->id) }}"
+                               class="text-yellow-600 hover:underline">Edit</a>
+                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="delete-form inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button"
+                                        class="text-red-600 hover:underline delete-btn">
+                                    Delete
+                                </button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
                 @empty

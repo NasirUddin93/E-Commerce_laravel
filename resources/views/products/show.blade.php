@@ -65,12 +65,16 @@
             </div>
 
             <!-- Add to Cart -->
-            <div class="mt-6 flex items-center gap-4">
-                <input type="number" value="1" min="1"
-                       class="w-16 border border-gray-300 rounded-lg p-2 text-center">
-                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                    Add to Cart
-                </button>
+            <div class="mt-6">
+                <form action="{{ route('cart.add') }}" method="POST" class="flex items-center gap-4">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="number" name="quantity" value="1" min="1"
+                           class="w-16 border border-gray-300 rounded-lg p-2 text-center">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        Add to Cart
+                    </button>
+                </form>
             </div>
         </div>
     </div>
